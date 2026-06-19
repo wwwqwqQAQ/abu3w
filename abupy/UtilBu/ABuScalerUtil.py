@@ -359,7 +359,7 @@ def scaler_matrix(group, type_look='look_max', mean_how=False):
         group = pd.DataFrame(group)
 
     # 向前填充na，不能补0，否则如果可视化价格范围就会变大
-    group.fillna(method='bfill', inplace=True)
+    group.bfill(inplace=True)
 
     if type_look == 'look_max':
         # 向较大的序列看齐

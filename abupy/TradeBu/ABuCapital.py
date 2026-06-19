@@ -41,7 +41,7 @@ class AbuCapital(PickleStateMixin):
         # 根据基准时间序列，制作相同的时序资金对象capital_pd(pd.DcataFrame对象)
         self.capital_pd = pd.DataFrame(
             {
-                'cash_blance': np.NAN * kl_pd.shape[0],
+                'cash_blance': np.nan * kl_pd.shape[0],
                 'stocks_blance': np.zeros(kl_pd.shape[0]),
                 'atr21': kl_pd['atr21'],
                 'date': kl_pd['date']
@@ -76,23 +76,23 @@ class AbuCapital(PickleStateMixin):
         # 买涨持仓量
         call_keep = '_call_keep'
         if self.capital_pd.columns.tolist().count(a_symbol + call_keep) == 0:
-            self.capital_pd[a_symbol + call_keep] = np.NAN * \
+            self.capital_pd[a_symbol + call_keep] = np.nan * \
                                                     self.capital_pd.shape[0]
         # 买跌持仓量
         put_keep = '_put_keep'
         if self.capital_pd.columns.tolist().count(a_symbol + put_keep) == 0:
-            self.capital_pd[a_symbol + put_keep] = np.NAN * \
+            self.capital_pd[a_symbol + put_keep] = np.nan * \
                                                    self.capital_pd.shape[0]
         # 买涨总价值
         call_worth = '_call_worth'
         if self.capital_pd.columns.tolist().count(a_symbol + call_worth) == 0:
-            self.capital_pd[a_symbol + call_worth] = np.NAN * \
+            self.capital_pd[a_symbol + call_worth] = np.nan * \
                                                      self.capital_pd.shape[0]
 
         # 买跌总价值
         put_worth = '_put_worth'
         if self.capital_pd.columns.tolist().count(a_symbol + put_worth) == 0:
-            self.capital_pd[a_symbol + put_worth] = np.NAN * \
+            self.capital_pd[a_symbol + put_worth] = np.nan * \
                                                     self.capital_pd.shape[0]
 
     def apply_init_kl(self, action_pd, show_progress):
@@ -157,16 +157,16 @@ class AbuCapital(PickleStateMixin):
             :param buy_type_head: 代表交易类型，范围（_call，_put）
             """
             # cash_blance对na进行pad处理
-            self.capital_pd['cash_blance'].fillna(method='pad', inplace=True)
+            self.capital_pd['cash_blance'].ffill(inplace=True)
             # symbol对应列持仓量对na进行处理
-            self.capital_pd[kl_pd.name + buy_type_head + '_keep'].fillna(method='pad', inplace=True)
+            self.capital_pd[kl_pd.name + buy_type_head + '_keep'].ffill(inplace=True)
             self.capital_pd[kl_pd.name + buy_type_head + '_keep'].fillna(0, inplace=True)
 
             # 使用apply在axis＝1上，即每一个交易日上对持仓量及市场价值进行更新
             self.capital_pd.apply(self.apply_k_line, axis=1, args=(kl_pd, buy_type_head))
 
             # symbol对应列市场价值对na进行处理
-            self.capital_pd[kl_pd.name + buy_type_head + '_worth'].fillna(method='pad', inplace=True)
+            self.capital_pd[kl_pd.name + buy_type_head + '_worth'].ffill(inplace=True)
             self.capital_pd[kl_pd.name + buy_type_head + '_worth'].fillna(0, inplace=True)
 
             # 纠错处理把keep=0但是worth被pad的进行二次修正
@@ -273,7 +273,7 @@ class AbuCapital(PickleStateMixin):
             if has_cond1 and has_cond2:
                 # 前提1 + 前提2->本就有持仓, 拿到之前的持仓量
                 keep_cnt = self.capital_pd[a_order.buy_symbol
-                                           + buy_type_keep].iloc[:num_index + 1].dropna()[-1]
+                                           + buy_type_keep].iloc[:num_index + 1].dropna().iloc[-1]
 
             keep_cnt += a_order.buy_cnt
 
@@ -317,7 +317,7 @@ class AbuCapital(PickleStateMixin):
 
         if has_cond1 and has_cond2:
             # 有持仓, 拿到之前的持仓量
-            keep_cnt = self.capital_pd[a_order.buy_symbol + buy_type_keep].iloc[:num_index + 1].dropna()[-1]
+            keep_cnt = self.capital_pd[a_order.buy_symbol + buy_type_keep].iloc[:num_index + 1].dropna().iloc[-1]
             sell_cnt = a_order.buy_cnt
 
             if keep_cnt < sell_cnt:

@@ -303,7 +303,7 @@ class NTApi(StockBaseMarket, SupportMixin):
             if data is not None:
                 temp_df = self.data_parser_cls(self._symbol, data.json()).df
             if temp_df is not None:
-                kl_df = temp_df if kl_df is None else kl_df.append(temp_df)
+                kl_df = temp_df if kl_df is None else pd.concat([kl_df, temp_df])
         if kl_df is None:
             return None
         return StockBaseMarket._fix_kline_pd(kl_df, n_folds, start, end)

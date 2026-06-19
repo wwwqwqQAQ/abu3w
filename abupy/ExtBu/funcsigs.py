@@ -11,7 +11,7 @@ import re
 import types
 
 try:
-    from collections import OrderedDict
+    from collections import OrderedDict  # py3.14 compat
 except ImportError:
     from .odict import OrderedDict
 

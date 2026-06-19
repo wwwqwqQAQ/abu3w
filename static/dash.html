@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8"><title>仪表盘 - QuantDesk</title>
+<script src="/static/echarts.min.js"></script>
+<style>body{font:14px -apple-system,sans-serif;background:#080c12;color:#e2e8f0;margin:0;padding:24px}
+.card{background:#0f1620;border:1px solid #1a2738;border-radius:10px;padding:18px;margin-bottom:14px}
+h2{font-size:14px;margin:0 0 12px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.mc{background:#0f1620;border:1px solid #1a2738;border-radius:10px;padding:16px;text-align:center}
+.mc .v{font-size:24px;font-weight:800}.mc .l{font-size:10px;color:#64748b;margin-top:4px}
+.up{color:#26b74e}.down{color:#e55050}
+.tkr{display:flex;padding:7px 10px;border-radius:6px;cursor:pointer;gap:10px;font-size:13px}.tkr:hover{background:rgba(77,159,255,.04)}
+nav{margin-bottom:20px}nav a{color:#4d9fff;margin-right:16px;text-decoration:none;font-size:13px}nav a:hover{color:#fff}
+</style></head><body>
+<nav><a href="/static/dash.html">📊 仪表盘</a><a href="/static/monitor.html">📡 行情</a><a href="/static/backtest.html">⚔️ 回测</a></nav>
+<div class="grid4" id="cards"></div>
+<div class="grid2"><div class="card"><h2>RSI 分布</h2><div style="width:100%;height:360px" id="c1"></div></div>
+<div class="card"><h2>行情面板</h2><div id="list"></div></div></div>
+<script>
+fetch('/api/dashboard').then(r=>r.json()).then(d=>{
+document.getElementById('cards').innerHTML=
+'<div class="mc"><div class="v up">'+d.oversold+' 只</div><div class="l">超卖 RSI<25</div></div>'+
+'<div class="mc"><div class="v down">'+d.overbought+' 只</div><div class="l">超买 RSI>80</div></div>'+
+'<div class="mc"><div class="v">'+d.sentiment+'</div><div class="l">市场情绪</div></div>'+
+'<div class="mc"><div class="v">0 条</div><div class="l">预警</div></div>';
+document.getElementById('list').innerHTML=d.items.map(a=>'<div class="tkr"><span style="font-weight:600;min-width:70px">'+a.name+'</span><span style="font-size:10px;color:#64748b;min-width:52px">'+a.code+'</span><span style="font-size:14px;font-weight:700;min-width:80px;text-align:right">¥'+a.close.toFixed(2)+'</span><span class="'+(a.change_20d>=0?'up':'down')+'" style="min-width:68px;text-align:right;font-size:12px">'+(a.change_20d>=0?'+':'')+a.change_20d+'%</span><span style="min-width:80px;text-align:right;font-size:12px">RSI '+a.rsi+'</span></div>').join('');
+var c=echarts.init(document.getElementById('c1'));
+c.setOption({tooltip:{},grid:{left:40,right:12,top:12,bottom:55},xAxis:{type:'category',data:d.items.map(a=>a.name),axisLabel:{fontSize:10,color:'#64748b'}},yAxis:{min:0,max:100,splitLine:{lineStyle:{color:'#1a2738'}}},series:[{type:'bar',data:d.items.map(a=>({value:a.rsi,itemStyle:{color:a.rsi<25?'#26b74e':a.rsi>80?'#e55050':a.rsi>70?'#e8a838':'#4d9fff'}})),barWidth:'60%',markLine:{silent:true,symbol:'none',data:[{yAxis:25,label:{color:'#26b74e'},lineStyle:{color:'#26b74e',type:'dashed'}},{yAxis:80,label:{color:'#e55050'},lineStyle:{color:'#e55050',type:'dashed'}}]}}]});
+});
+</script></body></html>

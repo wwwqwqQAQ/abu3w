@@ -8,7 +8,7 @@ from __future__ import division
 from __future__ import print_function
 
 import functools
-from collections import Iterable
+from collections.abc import Iterable
 
 import pandas as pd
 from ..CoreBu.ABuFixes import partial
@@ -34,21 +34,22 @@ try:
     from pandas.core.window import EWM
     g_pandas_has_ewm = True
 except ImportError:
-    g_pandas_has_ewm = False
+    # pandas 3.x: EWM moved, but .ewm() method exists on Series/DataFrame
+    g_pandas_has_ewm = hasattr(pd.Series([1]), 'ewm')
 
 try:
     # noinspection PyUnresolvedReferences
     from pandas.core.window import Rolling
     g_pandas_has_rolling = True
 except ImportError:
-    g_pandas_has_rolling = False
+    g_pandas_has_rolling = hasattr(pd.Series([1]), 'rolling')
 
 try:
     # noinspection PyUnresolvedReferences
     from pandas.core.window import Expanding
     g_pandas_has_expanding = True
 except ImportError:
-    g_pandas_has_expanding = False
+    g_pandas_has_expanding = hasattr(pd.Series([1]), 'expanding')
 
 
 def __pd_object_covert_start(iter_obj):

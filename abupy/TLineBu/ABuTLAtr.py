@@ -55,7 +55,7 @@ def calc_atr_std(kl_pd, xd=21, ewm=True, show=True):
         atr_roll_std = pd_rolling_std(atr_change, window=xd, min_periods=1, center=False) * np.sqrt(xd)
 
     # min_periods=1还是会有两个nan，填了
-    atr_roll_std = pd.Series(atr_roll_std).fillna(method='bfill')
+    atr_roll_std = pd.Series(atr_roll_std).bfill()
     # 主要目的就是通过atr_roll_std构造line
     line = AbuTLine(atr_roll_std, 'atr std')
     if show:

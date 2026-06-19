@@ -54,7 +54,7 @@ def calc_wave_std(kl_pd, xd=21, ewm=True, show=True):
         roll_std = pd_rolling_std(change, window=xd, min_periods=1, center=False) * np.sqrt(xd)
 
     # min_periods=1还是会有两个nan，填了
-    roll_std = pd.Series(roll_std).fillna(method='bfill')
+    roll_std = pd.Series(roll_std).bfill()
     # 主要目的就是通过roll_std构造AbuTLine对象line
     line = AbuTLine(roll_std, 'wave std')
     if show:

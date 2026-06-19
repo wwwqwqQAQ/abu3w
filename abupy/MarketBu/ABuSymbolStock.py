@@ -246,7 +246,7 @@ class AbuSymbolUS(AbuSymbolStockBase):
 
     def __contains__(self, item):
         """成员测试：是否item或item[2:]在self.df.symbol.values中"""
-        return item in self.df.symbol.values or (len(item) > 2 and item[2:] in self.df.symbol.values)
+        return item in self.df.symbol.values or (len(item) > 2 and item[2:] in self.df.symbol.values[0])
 
     def __getitem__(self, key):
         """

@@ -81,7 +81,7 @@ def dump_custom_abu_index_csv(custom_name, custom_desc):
         # 如果已存在相同索引直接返回，不再写入
         if custom_name in index_csv_df.index:
             return
-        index_csv_df = index_csv_df.append(index_df)
+        index_csv_df = pd.concat([index_csv_df, index_df])
     else:
         index_csv_df = index_df
     # 最终dump为csv文件
@@ -114,7 +114,7 @@ def dump_custom_ump_index_csv(custom_name, ump_unique, is_main_ump, custom_desc)
     if index_csv_df is not None:
         if custom_name in index_csv_df.index:
             return
-        index_csv_df = index_csv_df.append(index_df)
+        index_csv_df = pd.concat([index_csv_df, index_df])
     else:
         index_csv_df = index_df
     # 最终dump为csv文件

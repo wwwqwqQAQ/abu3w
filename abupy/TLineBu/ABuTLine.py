@@ -9,7 +9,7 @@ from __future__ import print_function
 import itertools
 import logging
 import math
-from collections import Iterable
+from collections.abc import Iterable
 from enum import Enum
 
 import numpy as np
@@ -102,7 +102,7 @@ class AbuTLine(FreezeAttrMixin):
         """
 
         # 把序列的nan进行填充，实际上应该是外面根据数据逻辑把nan进行填充好了再传递进来，这里只能都使用bfill填了
-        line = pd.Series(line).fillna(method='bfill')
+        line = pd.Series(line).bfill()
         self.tl = arr_to_numpy(line)
         self.mean = kwargs.pop('mean', self.tl.mean())
         self.std = kwargs.pop('std', self.tl.std())

@@ -285,5 +285,5 @@ class BtcBigWaveClf(AbuMLPd):
                              'pre_close': 'today_pre_close',
                              'date_week': 'today_date_week'}, inplace=True)
             # 将抽取改名字后的特征连接起来组合成为一条新数据，即3天的交易数据特征－>1条新的数据
-            btc_df = btc_df.append(pd.concat([a0, a1, a2], axis=0), ignore_index=True)
+            btc_df = pd.concat([btc_df, pd.concat([a0, a1, a2], axis=0)], ignore_index=True)
         return btc_df

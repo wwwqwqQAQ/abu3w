@@ -50,7 +50,7 @@ class AbuMetricsFutures(AbuMetricsBase):
         self.algorithm_sharpe = stats.sharpe_ratio(self.algorithm_returns)
         # 最大回撤
         # noinspection PyUnresolvedReferences
-        self.max_drawdown = stats.max_drawdown(self.algorithm_returns.values)
+        self.max_drawdown = stats.max_drawdown(self.algorithm_returns.values[0])
 
     @valid_check
     @warnings_filter  # skip: statsmodels / nonparametric / kdetools.py:20
@@ -81,7 +81,7 @@ class AbuMetricsFutures(AbuMetricsBase):
 
         if only_show_returns:
             return
-        sns.regplot(x=np.arange(0, len(self.algorithm_cum_returns)), y=self.algorithm_cum_returns.values)
+        sns.regplot(x=np.arange(0, len(self.algorithm_cum_returns)), y=self.algorithm_cum_returns.values[0])
         plt.show()
         sns.distplot(self.capital.capital_pd['capital_blance'], kde_kws={"lw": 3, "label": "capital blance kde"})
         plt.show()

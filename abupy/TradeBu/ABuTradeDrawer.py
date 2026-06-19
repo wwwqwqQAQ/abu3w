@@ -171,7 +171,7 @@ def plot_capital_info(capital_pd, init_cash=-1):
     # 为了画出平滑的曲线，取有值的
     cap_cp = copy.deepcopy(capital_pd)
     cap_cp['stocks_blance'][cap_cp['stocks_blance'] <= 0] = np.nan
-    cap_cp['stocks_blance'].fillna(method='pad', inplace=True)
+    cap_cp['stocks_blance'].ffill(inplace=True)
     cap_cp['stocks_blance'].dropna(inplace=True)
     cap_cp['stocks_blance'].plot()
     plt.title('stocks blance')

@@ -233,17 +233,17 @@ class AbuFeaturePrice(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
                 2016-07-25    266.0
                 2016-07-26    239.0
 
-                -> price_close.rank()[-1]的结果是买入时刻或者卖出时刻的排名
+                -> price_close.rank().iloc[-1]的结果是买入时刻或者卖出时刻的排名
 
                 239.0
 
-                －> price_close.rank()[-1] / price_close.rank().shape[0] 的结果即为：
+                －> price_close.rank().iloc[-1] / price_close.rank().shape[0] 的结果即为：
                 买入时刻或者卖出时刻的排名在周期中的排名位置，值由0-1
 
-                eg: price_close.rank()[-1] / price_close.rank().shape[0]
+                eg: price_close.rank().iloc[-1] / price_close.rank().shape[0]
                 -> 239.0 / 504 = 0.47420634920634919, 即代表买入或者卖出时价格在特征周期中的位置
             """
-            price_rank = price_close.rank()[-1] / price_close.rank().shape[0]
+            price_rank = price_close.rank().iloc[-1] / price_close.rank().shape[0]
             # 标准化价格rank值
             price_rank = 0 if np.isnan(price_rank) else round(price_rank, 3)
             # 价格rank特征键值对字典添加价格rank周期key和对应的价格rank值

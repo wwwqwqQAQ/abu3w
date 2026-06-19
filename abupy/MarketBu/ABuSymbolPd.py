@@ -8,7 +8,7 @@ from __future__ import division
 from __future__ import print_function
 
 import logging
-from collections import Iterable
+from collections.abc import Iterable
 
 import pandas as pd
 
@@ -45,12 +45,12 @@ def _benchmark(df, benchmark, symbol):
     :param symbol: Symbol对象
     :return: 使用基准的时间范围切割返回的金融时间序列
     """
-    if len(df.index & benchmark.kl_pd.index) <= 0:
+    if len(df.index.intersection(benchmark.kl_pd.index)) <= 0:
         # 如果基准benchmark时间范围和输入的df没有交集，直接返回None
         return None
 
     # 两个金融时间序列通过loc寻找交集
-    kl_pd = df.loc[benchmark.kl_pd.index]
+    kl_pd = df.reindex(benchmark.kl_pd.index)
     # nan的date个数即为不相交的个数
     nan_cnt = kl_pd['date'].isnull().value_counts()
     # 两个金融序列是否相同的结束日期
@@ -82,8 +82,8 @@ def _benchmark(df, benchmark, symbol):
     # nan的p_change是0
     kl_pd.p_change.fillna(value=0, inplace=True)
     # 先把close填充了，然后用close填充其它的
-    kl_pd.close.fillna(method='pad', inplace=True)
-    kl_pd.close.fillna(method='bfill', inplace=True)
+    kl_pd.close.ffill(inplace=True)
+    kl_pd.close.bfill(inplace=True)
     # 用close填充open
     kl_pd.open.fillna(value=kl_pd.close, inplace=True)
     # 用close填充high
@@ -94,9 +94,9 @@ def _benchmark(df, benchmark, symbol):
     kl_pd.pre_close.fillna(value=kl_pd.close, inplace=True)
 
     # 细节nan处理完成后，把剩下的nan都填充了
-    kl_pd = kl_pd.fillna(method='pad')
+    kl_pd = kl_pd.ffill()
     # bfill再来一遍只是为了填充最前面的nan
-    kl_pd.fillna(method='bfill', inplace=True)
+    kl_pd.bfill(inplace=True)
 
     # pad了数据所以，交易日期date的值需要根据time index重新来一遍
     kl_pd['date'] = [int(ts.date().strftime("%Y%m%d")) for ts in kl_pd.index]
@@ -361,7 +361,9 @@ def combine_pre_kl_pd(kl_pd, n_folds=1):
     pre_kl_pd = make_kl_df(kl_pd.name, data_mode=ABuEnv.EMarketDataSplitMode.E_DATA_SPLIT_SE, n_folds=n_folds,
                            end=end)
     # 再合并两段时间序列，pre_kl_pd[:-1]跳过重复的end
-    combine_kl = kl_pd if pre_kl_pd is None else pre_kl_pd[:-1].append(kl_pd)
+    # pandas 3.x compat: append → pd.concat
+    import pandas as pd
+    combine_kl = kl_pd if pre_kl_pd is None else pd.concat([pre_kl_pd[:-1], kl_pd])
     # 根据combine_kl长度重新进行key计算
     combine_kl['key'] = list(range(0, len(combine_kl)))
     return combine_kl
@@ -375,15 +377,15 @@ def calc_atr(kline_df):
     kline_df['atr21'] = 0
     if kline_df.shape[0] > 21:
         # 大于21d计算atr21
-        kline_df['atr21'] = Atr.atr21(kline_df['high'].values, kline_df['low'].values, kline_df['pre_close'].values)
+        kline_df['atr21'] = Atr.atr21(kline_df['high'].values, kline_df['low'].values, kline_df['pre_close'].values[0])
         # 将前面的bfill
-        kline_df['atr21'].fillna(method='bfill', inplace=True)
+        kline_df['atr21'].bfill(inplace=True)
     kline_df['atr14'] = 0
     if kline_df.shape[0] > 14:
         # 大于14d计算atr14
-        kline_df['atr14'] = Atr.atr14(kline_df['high'].values, kline_df['low'].values, kline_df['pre_close'].values)
+        kline_df['atr14'] = Atr.atr14(kline_df['high'].values, kline_df['low'].values, kline_df['pre_close'].values[0])
         # 将前面的bfill
-        kline_df['atr14'].fillna(method='bfill', inplace=True)
+        kline_df['atr14'].bfill(inplace=True)
 
 
 @AbuDeprecated('only for old abu!')

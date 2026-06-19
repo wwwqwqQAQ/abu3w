@@ -1,0 +1,10 @@
+{
+  "name": "quantdesk",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "app:mac": "bun scripts/build-macos-app.ts",
+    "start": "python3 server.py"
+  }
+}

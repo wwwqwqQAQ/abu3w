@@ -1,6 +1,16 @@
 # -*- encoding:utf-8 -*-
 from __future__ import absolute_import
 
+# Python 3.13+ compatibility shim — must run before any other imports
+import sys as __sys__
+try:
+    import imghdr
+except ImportError:
+    class _ImghdrShim:
+        def what(self, *a, **kw): return None
+    __sys__.modules['imghdr'] = _ImghdrShim()
+del __sys__
+
 from .CoreBu import *
 from .CheckBu import *
 from .FactorSellBu import *

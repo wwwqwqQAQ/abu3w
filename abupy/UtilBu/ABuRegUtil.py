@@ -48,8 +48,8 @@ def regress_xy(x, y, mode=True, zoom=False, show=False):
         x = sm.add_constant(x)
         model = regression.linear_model.OLS(y, x).fit()
 
-        intercept = model.params[0]
-        rad = model.params[1]
+        intercept = model.params.iloc[0] if hasattr(model.params, 'iloc') else model.params[0]
+        rad = model.params.iloc[1] if hasattr(model.params, 'iloc') else model.params[1]
         # y = kx + b, x取x[:, 1]，因为add_constant
         y_fit = x[:, 1] * rad + intercept
     else:
@@ -98,7 +98,7 @@ def calc_regress_deg(y, show=True):
     """
     # 将y值 zoom到与x一个级别
     model, _ = regress_y(y, mode=True, zoom=True, show=show)
-    rad = model.params[1]
+    rad = model.params.iloc[1] if hasattr(model.params, 'iloc') else model.params[1]
     # fit出弧度转成角度
     deg = np.rad2deg(rad)
     return deg

@@ -1,0 +1,31 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8"><title>实时行情 - QuantDesk</title>
+<script src="/static/echarts.min.js"></script>
+<style>
+body{font:14px -apple-system,sans-serif;background:#080c12;color:#e2e8f0;margin:0;padding:24px}
+.card{background:#0f1620;border:1px solid #1a2738;border-radius:10px;padding:18px;margin-bottom:14px}
+h2{font-size:14px;margin:0 0 12px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+nav{margin-bottom:20px}nav a{color:#4d9fff;margin-right:16px;text-decoration:none;font-size:13px}
+.up{color:#26b74e}.down{color:#e55050}.muted{color:#64748b}
+.tkr{display:flex;padding:7px 10px;border-radius:6px;cursor:pointer;gap:10px;font-size:13px}.tkr:hover{background:rgba(77,159,255,.04)}
+.btn{background:transparent;border:1px solid #1a2738;color:#e2e8f0;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px}.btn:hover{background:rgba(255,255,255,.03)}
+</style></head><body>
+<nav><a href="/static/dash.html">📊 仪表盘</a><a href="/static/monitor.html">📡 行情</a><a href="/static/backtest.html">⚔️ 回测</a><a href="/">🏠 菜单</a></nav>
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">实时行情 <span style="font-size:11px;color:#64748b;font-weight:400">每10秒自动刷新</span></h2><button class="btn" onclick="loadData()">🔄 刷新</button></div>
+<div id="list"></div></div>
+<div class="grid2"><div class="card"><h2>价格对比 ¥</h2><div style="width:100%;height:280px" id="c1"></div></div>
+<div class="card"><h2>RSI 仪表</h2><div style="width:100%;height:280px" id="c2"></div></div></div>
+<script>
+async function loadData(){
+var r=await fetch('/api/stocks');var stocks=await r.json();var top=stocks.slice(0,16);
+var ps=[],rs=[],ns=[],html='';
+for(var i=0;i<top.length;i++){
+try{var r2=await fetch('/api/stock/'+top[i].code+'/realtime');var d=await r2.json();if(d.error)continue;
+var chg=(d.change_pct||0),rsv=(d.rsi||50),price=(d.price||0);
+html+='<div class="tkr"><span style="font-weight:600;min-width:70px">'+(d.name||top[i].name)+'</span><span style="font-size:10px;color:#64748b;min-width:55px">'+top[i].code+'</span><span style="font-size:15px;font-weight:700;min-width:85px;text-align:right">¥'+price.toFixed(2)+'</span><span class="'+(chg>=0?'up':'down')+'" style="min-width:70px;text-align:right;font-size:12px;font-weight:600">'+(chg>=0?'+':'')+chg.toFixed(2)+'%</span><span style="min-width:90px;text-align:right;font-size:12px;color:'+(rsv<25?'#26b74e':rsv>80?'#e55050':'#e2e8f0')+'">RSI '+rsv.toFixed(1)+'</span></div>';
+ps.push(price);rs.push(rsv);ns.push(d.name||top[i].name)}catch(e){}}
+document.getElementById('list').innerHTML=html||'<span class="muted">加载失败</span>';
+var c1=echarts.init(document.getElementById('c1'));c1.setOption({tooltip:{},grid:{left:50,right:10,top:10,bottom:45},xAxis:{type:'category',data:ns,axisLabel:{rotate:35,fontSize:9,color:'#64748b'}},yAxis:{splitLine:{lineStyle:{color:'#1a2738'}}},series:[{type:'bar',data:ps.map(v=>({value:v,itemStyle:{color:v>0?'#26b74e':'#e55050'}})),barWidth:'60%'}]});
+var c2=echarts.init(document.getElementById('c2'));c2.setOption({tooltip:{},grid:{left:40,right:10,top:10,bottom:45},xAxis:{type:'category',data:ns,axisLabel:{rotate:35,fontSize:9,color:'#64748b'}},yAxis:{min:0,max:100,splitLine:{lineStyle:{color:'#1a2738'}}},series:[{type:'bar',data:rs.map(v=>({value:v,itemStyle:{color:v<25?'#26b74e':v>80?'#e55050':v>70?'#e8a838':'#4d9fff'}})),barWidth:'60%',markLine:{silent:true,symbol:'none',data:[{yAxis:25,label:{color:'#26b74e'},lineStyle:{color:'#26b74e',type:'dashed'}},{yAxis:80,label:{color:'#e55050'},lineStyle:{color:'#e55050',type:'dashed'}}]}}]});
+}
+loadData();setInterval(loadData,10000);
+</script></body></html>

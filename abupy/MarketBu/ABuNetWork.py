@@ -95,7 +95,7 @@ def ast_parse_js(js_var):
         elif isinstance(node, ast.Name):
             return node.id
         elif isinstance(node, ast.Dict):
-            return dict(zip(map(_parse, node.keys), map(_parse, node.values)))
+            return dict(zip(map(_parse, node.keys), map(_parse, node.values[0])))
         elif isinstance(node, ast.List):
             return map(_parse, node.elts)
         else:

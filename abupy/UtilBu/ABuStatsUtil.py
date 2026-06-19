@@ -11,7 +11,8 @@ try:
     from collections import OrderedDict
 except ImportError:
     from ..ExtBu.odict import OrderedDict
-from collections import namedtuple, Iterable
+from collections import namedtuple
+from collections.abc import Iterable
 
 import logging
 import math
@@ -400,7 +401,7 @@ def demean(arr, rolling_window=0, show=False):
             2014-07-30	3.796	-2.366	0.612	-0.226	2.57	0.0206	0.386
             2014-07-31	-1.824	-5.446	-0.158	-0.536	-13.25	-0.6144	-2.164
 
-            ABuStatsUtil.demean(cc.head().values)
+            ABuStatsUtil.demean(cc.head().values[0])
 
                 0	1	2	3	4	5	6
             0	-1.554	5.004	-0.898	0.104	4.17	0.1846	-0.094
@@ -425,7 +426,7 @@ def demean(arr, rolling_window=0, show=False):
             2014-07-30    3.796
             2014-07-31   -1.824
 
-            ABuStatsUtil.demean(tsla.head().values)
+            ABuStatsUtil.demean(tsla.head().values[0])
 
                 0
             0	-1.554
@@ -446,7 +447,7 @@ def demean(arr, rolling_window=0, show=False):
     if rolling_window > 0:
         # arr_to_pandas装饰器保证了进来的类型不是pd.DataFrame就是pd.Series
         arr_mean = pd_rolling_mean(arr, window=rolling_window, min_periods=1)
-        # arr_mean.fillna(method='bfill', inplace=True)
+        # arr_mean.bfill(inplace=True)
     else:
         arr_mean = arr.mean()
 

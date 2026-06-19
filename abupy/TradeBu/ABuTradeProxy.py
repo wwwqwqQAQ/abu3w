@@ -132,7 +132,7 @@ def union_in_2orders(orders_pd, other_orders_pd):
     :param other_orders_pd: 回测结果生成的交易订单构成的pd.DataFrame对象
     :return: orders_pd | cmp_orders_pd
     """
-    orders_pd = orders_pd.append(other_orders_pd)
+    orders_pd = pd.concat([orders_pd, other_orders_pd])
     orders_pd = orders_pd.drop_duplicates()
     return orders_pd
 
@@ -293,11 +293,11 @@ def trade_summary(orders, kl_pd, draw=False, show_info=True):
         summary += mean_loss_profit
 
         # 盈利笔数
-        win_cnt = 0 if len(orders_pd[orders_pd.result == 1].result.value_counts().values) <= 0 else \
+        win_cnt = 0 if len(orders_pd[orders_pd.result == 1].result.value_counts().values[0]) <= 0 else \
             orders_pd[orders_pd.result == 1].result.value_counts().values[0]
 
         # 亏损笔数
-        loss_cnt = 0 if len(orders_pd[orders_pd.result == -1].result.value_counts().values) <= 0 else \
+        loss_cnt = 0 if len(orders_pd[orders_pd.result == -1].result.value_counts().values[0]) <= 0 else \
             orders_pd[orders_pd.result == -1].result.value_counts().values[0]
 
         # 胜率

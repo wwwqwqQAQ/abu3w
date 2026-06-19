@@ -167,15 +167,15 @@ class AbuMetricsBase(object):
 
         # 信息比率
         # noinspection PyUnresolvedReferences
-        self.information = stats.information_ratio(self.algorithm_returns.values, self.benchmark_returns.values)
+        self.information = stats.information_ratio(self.algorithm_returns.values, self.benchmark_returns.values[0])
 
         # 阿尔法, 贝塔
         # noinspection PyUnresolvedReferences
-        self.alpha, self.beta = stats.alpha_beta_aligned(self.algorithm_returns.values, self.benchmark_returns.values)
+        self.alpha, self.beta = stats.alpha_beta_aligned(self.algorithm_returns.values, self.benchmark_returns.values[0])
 
         # 最大回撤
         # noinspection PyUnresolvedReferences
-        self.max_drawdown = stats.max_drawdown(self.algorithm_returns.values)
+        self.max_drawdown = stats.max_drawdown(self.algorithm_returns.values[0])
 
     def _metrics_sell_stats(self):
         """并非度量真实成交了的结果，只度量orders_pd，即认为没有仓位管理和资金量限制前提下的表现"""
@@ -360,7 +360,7 @@ class AbuMetricsBase(object):
 
         if only_show_returns:
             return
-        sns.regplot(x=np.arange(0, len(self.algorithm_cum_returns)), y=self.algorithm_cum_returns.values)
+        sns.regplot(x=np.arange(0, len(self.algorithm_cum_returns)), y=self.algorithm_cum_returns.values[0])
         plt.show()
         sns.distplot(self.capital.capital_pd['capital_blance'], kde_kws={"lw": 3, "label": "capital blance kde"})
         plt.show()

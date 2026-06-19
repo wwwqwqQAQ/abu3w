@@ -1,0 +1,21 @@
+<!DOCTYPE html><html><head>
+<script src="/static/echarts.min.js"></script>
+<style>body{background:#111;color:#fff}.box{width:600px;height:300px;margin:20px;background:#222}</style>
+</head><body>
+<h1>ECharts Test</h1>
+<div class="box" id="c1"></div>
+<div class="box" id="c2" style="display:none"></div>
+<button onclick="show()">Show hidden chart</button>
+<script>
+console.log('ECharts version:', echarts.version);
+var c1 = echarts.init(document.getElementById('c1'));
+c1.setOption({title:{text:'Chart 1 - Visible'},xAxis:{data:['A','B','C']},yAxis:{},series:[{type:'bar',data:[10,20,30]}]});
+console.log('Chart 1 created');
+
+function show(){
+  document.getElementById('c2').style.display='block';
+  var c2 = echarts.init(document.getElementById('c2'));
+  c2.setOption({title:{text:'Chart 2 - Was Hidden'},xAxis:{data:['X','Y','Z']},yAxis:{},series:[{type:'line',data:[5,15,25]}]});
+  console.log('Chart 2 created');
+}
+</script></body></html>
