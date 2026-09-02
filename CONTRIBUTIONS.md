@@ -1,6 +1,6 @@
-# 阿布量化（abu）项目 · 个人贡献说明
+# 阿布量化（abu3w）项目 · 个人贡献说明
 
-> 作者：wwwqwqQAQ（3w）　·　仓库：github.com/wwwqwqQAQ/abu　·　提交：Publish 3w quant software and thesis
+> 作者：wwwqwqQAQ（3w）　·　仓库：github.com/wwwqwqQAQ/abu3w　·　提交：Publish 3w quant software and thesis
 
 ## 1. 归属说明
 
