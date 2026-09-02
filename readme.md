@@ -8,6 +8,7 @@
 | 《量化交易之路》示例代码 | ipython／python目录| 
 | 《机器学习之路》示例代码 | https://github.com/maxmon/abu_ml | 
 
+> 📌 **作者贡献说明**：本仓库在阿布量化框架之上的个人贡献，见 [CONTRIBUTIONS.md](CONTRIBUTIONS.md)。
 
 ###  🏆 [览器访问网址: https://www.abuquant.com](https://www.abuquant.com)
 
