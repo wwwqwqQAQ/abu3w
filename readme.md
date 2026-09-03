@@ -4,7 +4,7 @@
 
 ## 📸 效果预览（QuantDesk 仪表盘 · 真实行情）
 
-![QuantDesk 预览](preview.png)
+![QuantDesk 预览](preview.jpg)
 
 ## 项目构成
 
